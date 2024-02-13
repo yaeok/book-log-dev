@@ -3,7 +3,6 @@ import NextLink from 'next/link'
 import { AiOutlineMenu } from 'react-icons/ai'
 
 import {
-  Button,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -32,9 +31,8 @@ export default function DrawerBtn() {
           <DrawerHeader borderBottomWidth='1px'>Menu</DrawerHeader>
           <DrawerBody>
             <VStack spacing='4' align='left'>
-              <NextLink href='/todos'>ToDoリスト</NextLink>
-              <NextLink href='/books'>Bookリスト</NextLink>
-              <NextLink href='/trips'>Tripリスト</NextLink>
+              <NextLink href='/books'>Home</NextLink>
+              <NextLink href='/profile'>Profile</NextLink>
             </VStack>
           </DrawerBody>
         </DrawerContent>

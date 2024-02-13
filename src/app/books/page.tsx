@@ -8,16 +8,24 @@ import {
   QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore'
+import { register } from 'module'
 import { useRouter } from 'next/navigation'
 import React from 'react'
+import { useForm } from 'react-hook-form'
 import { GrAdd } from 'react-icons/gr'
+import { TiHeartFullOutline } from 'react-icons/ti'
 import { useRecoilValue } from 'recoil'
 
 import DrawerBtn from '@/components/drawer.component'
 import Loading from '@/components/loading.component'
 import {
   Button,
+  Card,
+  Checkbox,
   Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
   IconButton,
   Modal,
@@ -32,12 +40,21 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Textarea,
   useDisclosure,
 } from '@/design'
+import {
+  updateFavoritebyBookId,
+  updateIsCompletedbyBookId,
+} from '@/libs/apis/book'
 import { db } from '@/libs/config'
-import { updateIsCompletedbyBookId } from '@/libs/firebase/book'
 import { Book } from '@/models/book.model'
 import { userState } from '@/states/user'
+
+// フォームで使用する変数の型を定義
+type FormInputs = {
+  impressions: string
+}
 
 const tabList = [
   {
@@ -59,10 +76,17 @@ const tabList = [
 
 const BookListView = () => {
   const [books, setBooks] = React.useState<Book[]>([])
+  const [selectBook, setSelectBook] = React.useState<Book | null>(null)
   const user = useRecoilValue(userState)
   const [loading, setLoading] = React.useState<boolean>(true)
+  const [selectTab, setSelectTab] = React.useState<string>('want')
   const { isOpen, onOpen, onClose } = useDisclosure()
   const router = useRouter()
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm<FormInputs>()
 
   React.useEffect(() => {
     if (user) {
@@ -81,6 +105,7 @@ const BookListView = () => {
               bookId: doc.data().bookId,
               title: doc.data().title,
               content: doc.data().content,
+              impressions: doc.data().impressions ?? '',
               favorite: doc.data().favorite,
               isCompleted: doc.data().isCompleted,
               completedAt: doc.data().completedAt,
@@ -93,10 +118,6 @@ const BookListView = () => {
           }
         )
         setBooks(lstBook)
-        const lstUpdBook: Book[] = lstBook.filter((todo: Book) => {
-          return todo.isCompleted === false
-        })
-        setBooks(lstUpdBook)
         setLoading(false)
       })
       return () => {
@@ -106,28 +127,33 @@ const BookListView = () => {
     setLoading(false)
   }, [])
 
-  const unCompletedBooks = () => {
-    const lstUpdBook: Book[] = books.filter((todo: Book) => {
-      return todo.isCompleted === false
-    })
-    setBooks(lstUpdBook)
-  }
-
-  const completedBooks = () => {
-    const lstUpdBook: Book[] = books.filter((todo: Book) => {
-      return todo.isCompleted === true
-    })
-    setBooks(lstUpdBook)
-  }
-
   const onChangeCheckbox = async (args: {
     event: React.ChangeEvent<HTMLInputElement>
-    bookId: string
+    recbook: Book
   }) => {
+    setSelectBook(args.recbook)
+    onOpen()
+  }
+
+  const onSubmit = handleSubmit(async (data: FormInputs) => {
     await updateIsCompletedbyBookId({
       uid: user!.uid,
-      bookId: args.bookId,
-      isCompleted: args.event.target.checked,
+      bookId: selectBook?.bookId!,
+      impressions: data.impressions,
+      isCompleted: true,
+    })
+    onClose()
+  })
+
+  const onTapTab = (status: string) => {
+    setSelectTab(status)
+  }
+
+  const onTapFavorite = (recBook: Book) => {
+    updateFavoritebyBookId({
+      uid: user!.uid,
+      bookId: recBook.bookId,
+      favorite: !recBook.favorite,
     })
   }
 
@@ -165,47 +191,72 @@ const BookListView = () => {
           </Flex>
           <TabList>
             {tabList.map((tab, index) => (
-              <Tab key={index} fontSize='12px'>
+              <Tab
+                key={index}
+                fontSize='12px'
+                onClick={() => onTapTab(tab.status)}
+              >
                 {tab.name}
               </Tab>
             ))}
           </TabList>
         </Flex>
         <TabPanels>
-          {tabList.map((tab, index) => (
-            <TabPanel key={index} m='0' p='0'>
+          {tabList.map((tab) => (
+            <TabPanel key={tab.id} m='0' p='0'>
               {books
                 .filter((book) => {
-                  return tab.status === 'want'
-                    ? !book.isCompleted && !book.favorite
-                    : book.isCompleted && tab.status === 'read'
+                  switch (selectTab) {
+                    case 'want':
+                      return !book.isCompleted
+                    case 'read':
+                      return book.isCompleted
+                    case 'favorite':
+                      return book.favorite
+                    default:
+                      return false
+                  }
                 })
                 .map((book, index) => (
                   <div key={index}>
-                    <Flex
-                      flexDirection='row'
-                      justifyContent='space-between'
-                      alignItems='center'
-                      padding='8px'
-                      borderBottom='1px'
-                      borderColor='gray.200'
-                    >
-                      <Flex flexDirection='column'>
-                        <Heading fontSize='14px'>{book.title}</Heading>
-                        <Heading fontSize='12px' color='gray.500'>
-                          {book.content}
-                        </Heading>
-                      </Flex>
-                      <Flex flexDirection='row' alignItems='center'>
-                        <input
-                          type='checkbox'
+                    <Card marginY='8px'>
+                      <Flex
+                        flexDirection='row'
+                        justifyContent='space-between'
+                        alignItems='center'
+                        padding='8px'
+                        borderBottom='1px'
+                        borderColor='gray.200'
+                      >
+                        <IconButton
+                          aria-label=''
+                          variant='none'
+                          icon={<TiHeartFullOutline />}
+                          color={book.favorite ? 'pink.500' : 'gray.200'}
+                          bg='white'
+                          marginRight='8px'
+                          onClick={() => onTapFavorite(book)}
+                        />
+                        <Flex
+                          width='100%'
+                          flexDirection='column'
+                          cursor='pointer'
+                          onClick={() => router.push(`/books/${book.bookId}`)}
+                        >
+                          <Heading fontSize='14px'>{book.title}</Heading>
+                          <Heading fontSize='12px' color='gray.500'>
+                            {book.content}
+                          </Heading>
+                        </Flex>
+                        <Checkbox
                           checked={book.isCompleted}
+                          disabled={tab.status === 'want' ? false : true}
                           onChange={(event) => {
-                            onChangeCheckbox({ event, bookId: book.bookId })
+                            onChangeCheckbox({ event, recbook: book })
                           }}
                         />
                       </Flex>
-                    </Flex>
+                    </Card>
                   </div>
                 ))}
             </TabPanel>
@@ -222,13 +273,48 @@ const BookListView = () => {
         blockScrollOnMount={true}
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader fontSize='16px'></ModalHeader>
-          <ModalCloseButton />
-          <ModalBody></ModalBody>
+        <form onSubmit={onSubmit}>
+          <ModalContent>
+            <ModalHeader fontSize='16px'>{selectBook?.title!}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl isInvalid={Boolean(errors.impressions)}>
+                <FormLabel htmlFor='impressions' fontSize='12px'>
+                  感想
+                </FormLabel>
+                <Textarea
+                  resize='vertical'
+                  fontSize='12px'
+                  id='impressions'
+                  {...register('impressions', {
+                    required: '必須項目です',
+                    maxLength: {
+                      value: 200,
+                      message: '200文字以内で入力してください',
+                    },
+                  })}
+                />
+                <FormErrorMessage>
+                  {errors.impressions && errors.impressions.message}
+                </FormErrorMessage>
+              </FormControl>
+            </ModalBody>
 
-          <ModalFooter></ModalFooter>
-        </ModalContent>
+            <ModalFooter>
+              <Button
+                variant='none'
+                border='2px'
+                borderColor='purple.200'
+                marginTop='16px'
+                isLoading={isSubmitting}
+                type='submit'
+                shadow='lg'
+              >
+                完了
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </form>
       </Modal>
     </div>
   )

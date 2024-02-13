@@ -2,6 +2,7 @@ export type Book = {
   bookId: string
   title: string
   content: string
+  impressions: string
   favorite: boolean
   isCompleted: boolean
   completedAt: string

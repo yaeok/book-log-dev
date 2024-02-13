@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { signUpWithEmail } from '@/libs/firebase/auth'
+import { signUpWithEmail } from '@/libs/apis/auth'
 import {
   Button,
   Flex,

@@ -4,8 +4,8 @@ import { AuthContextProvider } from '@/providers/auth_provider'
 import DesignProvider from '@/providers/design_provider'
 
 export const metadata: Metadata = {
-  title: 'my todo',
-  description: 'ToDoアプリ',
+  title: 'My本棚',
+  description: '本棚管理アプリ',
 }
 
 export default function RootLayout({

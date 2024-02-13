@@ -18,7 +18,7 @@ import {
   Textarea,
   VStack,
 } from '@/design'
-import { registerBook } from '@/libs/firebase/book'
+import { registerBook } from '@/libs/apis/book'
 import { userState } from '@/states/user'
 
 // フォームで使用する変数の型を定義
@@ -37,12 +37,14 @@ const BookRegisterView = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>()
   const router = useRouter()
+  const inputFileRef = React.useRef<HTMLInputElement>(null)
 
   const onSubmit = handleSubmit(async (data: FormInputs) => {
     registerBook({
       uid: user!.uid,
       title: data.title,
       content: data.content,
+      imageURL: data.image,
     }).then(async () => {
       reset()
       router.back()
@@ -102,7 +104,7 @@ const BookRegisterView = () => {
           </FormControl>
           <FormControl isInvalid={Boolean(errors.content)}>
             <FormLabel htmlFor='content' fontSize='12px'>
-              内容
+              メモ
             </FormLabel>
             <Textarea
               resize='vertical'
@@ -124,32 +126,32 @@ const BookRegisterView = () => {
             <FormLabel htmlFor='image' fontSize='12px'>
               画像
             </FormLabel>
+            <Button onClick={() => inputFileRef.current?.click()}></Button>
             <Input
               border='none'
               fontSize='12px'
               id='image'
               type='file'
-              {...register('image', {
-                required: '必須項目です',
-              })}
+              multiple={false}
+              accept='image/jpeg, image/png, image/gif, image/jpg'
+              ref={inputFileRef}
+              display='none'
             />
             <FormErrorMessage>
               {errors.image && errors.image.message}
             </FormErrorMessage>
           </FormControl>
+          <Button
+            variant='none'
+            bg='purple.200'
+            width='100%'
+            isLoading={isSubmitting}
+            type='submit'
+            shadow='lg'
+          >
+            登録
+          </Button>
         </VStack>
-        <Button
-          variant='none'
-          border='2px'
-          borderColor='purple.200'
-          marginTop='16px'
-          width='100%'
-          isLoading={isSubmitting}
-          type='submit'
-          shadow='lg'
-        >
-          登録
-        </Button>
       </form>
     </div>
   )

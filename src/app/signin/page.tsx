@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import Loading from '@/components/loading.component'
-import { signInWithEmail } from '@/libs/apis/auth'
+import { signInWithEmail } from '@/libs/apis/firestore/auth'
 import {
   Button,
   Flex,

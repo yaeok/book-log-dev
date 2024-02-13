@@ -15,17 +15,20 @@ import {
   IconButton,
   Input,
   Spacer,
+  Square,
   Textarea,
   VStack,
 } from '@/design'
-import { registerBook } from '@/libs/apis/book'
+import { registerBook } from '@/libs/apis/firestore/book'
 import { userState } from '@/states/user'
+import Image from 'next/image'
+import { set } from 'date-fns'
 
 // フォームで使用する変数の型を定義
 type FormInputs = {
   title: string
   content: string
-  image: string
+  image: File[]
 }
 
 const BookRegisterView = () => {
@@ -38,6 +41,7 @@ const BookRegisterView = () => {
   } = useForm<FormInputs>()
   const router = useRouter()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
+  const [preview, setPreview] = React.useState<string>('')
 
   const onSubmit = handleSubmit(async (data: FormInputs) => {
     registerBook({
@@ -82,7 +86,43 @@ const BookRegisterView = () => {
         </Flex>
       </Flex>
       <form onSubmit={onSubmit}>
-        <VStack spacing='4' alignItems='left'>
+        <VStack spacing='4' alignItems='left' width='100%' marginY='8px'>
+          <FormControl isInvalid={Boolean(errors.content)}>
+            <Flex justifyContent='center' alignItems='center' marginY='4px'>
+              <Square
+                size='xs'
+                bg='gray.200'
+                borderRadius='10px'
+                position='relative'
+              >
+                <Image alt='' src={preview} fill />
+              </Square>
+            </Flex>
+            <FormLabel htmlFor='image' fontSize='12px'>
+              画像
+            </FormLabel>
+            <Button onClick={() => inputFileRef.current?.click()}></Button>
+            <Input
+              border='none'
+              fontSize='12px'
+              id='image'
+              type='file'
+              multiple={false}
+              accept='image/jpeg, image/png, image/gif, image/jpg'
+              display='none'
+              {...register('image', {
+                required: '必須項目です',
+              })}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                const { files } = event.target
+                setPreview(window.URL.createObjectURL(files![0]))
+              }}
+              ref={inputFileRef}
+            />
+            <FormErrorMessage>
+              {errors.image && errors.image.message}
+            </FormErrorMessage>
+          </FormControl>
           <FormControl isInvalid={Boolean(errors.title)}>
             <FormLabel htmlFor='title' fontSize='12px'>
               本タイトル
@@ -120,25 +160,6 @@ const BookRegisterView = () => {
             />
             <FormErrorMessage>
               {errors.content && errors.content.message}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={Boolean(errors.content)}>
-            <FormLabel htmlFor='image' fontSize='12px'>
-              画像
-            </FormLabel>
-            <Button onClick={() => inputFileRef.current?.click()}></Button>
-            <Input
-              border='none'
-              fontSize='12px'
-              id='image'
-              type='file'
-              multiple={false}
-              accept='image/jpeg, image/png, image/gif, image/jpg'
-              ref={inputFileRef}
-              display='none'
-            />
-            <FormErrorMessage>
-              {errors.image && errors.image.message}
             </FormErrorMessage>
           </FormControl>
           <Button

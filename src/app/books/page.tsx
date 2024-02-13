@@ -46,7 +46,7 @@ import {
 import {
   updateFavoritebyBookId,
   updateIsCompletedbyBookId,
-} from '@/libs/apis/book'
+} from '@/libs/apis/firestore/book'
 import { db } from '@/libs/config'
 import { Book } from '@/models/book.model'
 import { userState } from '@/states/user'

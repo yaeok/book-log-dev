@@ -19,7 +19,7 @@ import {
   useToast,
   VStack,
 } from '@/design'
-import { getBookbyBookId } from '@/libs/apis/book'
+import { getBookbyBookId } from '@/libs/apis/firestore/book'
 import { Book } from '@/models/book.model'
 import { userState } from '@/states/user'
 

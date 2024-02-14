@@ -25,7 +25,7 @@ import { userState } from '@/states/user'
 type FormInputs = {
   title: string
   content: string
-  image: string
+  image: any[]
 }
 
 const BookRegisterView = () => {

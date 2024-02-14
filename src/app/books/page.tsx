@@ -107,6 +107,7 @@ const BookListView = () => {
               content: doc.data().content,
               impressions: doc.data().impressions ?? '',
               favorite: doc.data().favorite,
+              imageURL: doc.data().imageURL,
               isCompleted: doc.data().isCompleted,
               completedAt: doc.data().completedAt,
               createdAt: doc.data().createdAt,

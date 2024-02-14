@@ -4,6 +4,7 @@ export type Book = {
   content: string
   impressions: string
   favorite: boolean
+  imageURL: string
   isCompleted: boolean
   completedAt: string
   createdAt: string

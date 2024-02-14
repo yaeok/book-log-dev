@@ -1,6 +1,4 @@
 'use client'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale/ja'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { SlArrowLeft } from 'react-icons/sl'

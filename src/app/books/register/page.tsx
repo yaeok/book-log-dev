@@ -25,7 +25,7 @@ import { userState } from '@/states/user'
 type FormInputs = {
   title: string
   content: string
-  image: File[]
+  image: string
 }
 
 const BookRegisterView = () => {
@@ -44,7 +44,7 @@ const BookRegisterView = () => {
       uid: user!.uid,
       title: data.title,
       content: data.content,
-      imageURL: data.image,
+      // imageURL: data.image,
     }).then(async () => {
       reset()
       router.back()

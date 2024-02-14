@@ -112,12 +112,12 @@ const BookRegisterView = () => {
               {...register('image', {
                 required: '必須項目です',
               })}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                const { files } = event.target
-                if (typeof window !== 'undefined' && files && files[0]) {
-                  setPreview(window.URL.createObjectURL(files[0]))
-                }
-              }}
+              // onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              //   const { files } = event.target
+              //   if (typeof window !== 'undefined' && files && files[0]) {
+              //     setPreview(window.URL.createObjectURL(files[0]))
+              //   }
+              // }}
               ref={inputFileRef}
             />
             <FormErrorMessage>

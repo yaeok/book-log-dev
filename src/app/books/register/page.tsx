@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,7 +15,6 @@ import {
   IconButton,
   Input,
   Spacer,
-  Square,
   Textarea,
   VStack,
 } from '@/design'
@@ -39,7 +37,7 @@ const BookRegisterView = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>()
   const router = useRouter()
-  const [preview, setPreview] = React.useState<string>('')
+  const inputFileRef = React.useRef<HTMLInputElement>(null)
 
   const onSubmit = handleSubmit(async (data: FormInputs) => {
     registerBook({
@@ -84,34 +82,7 @@ const BookRegisterView = () => {
         </Flex>
       </Flex>
       <form onSubmit={onSubmit}>
-        <VStack spacing='4' alignItems='left' width='100%' marginY='8px'>
-          <FormControl isInvalid={Boolean(errors.content)}>
-            <Flex justifyContent='center' alignItems='center' marginY='4px'>
-              <Square
-                size='xs'
-                bg='gray.200'
-                borderRadius='10px'
-                position='relative'
-              >
-                <Image alt='image' src={preview} fill />
-              </Square>
-            </Flex>
-            <FormLabel htmlFor='image' fontSize='12px'>
-              画像
-            </FormLabel>
-            {/* <Button onClick={() => inputFileRef.current?.click()}></Button> */}
-            <Input
-              border='none'
-              fontSize='12px'
-              id='image'
-              type='file'
-              multiple={false}
-              display='none'
-            />
-            <FormErrorMessage>
-              {errors.image && errors.image.message}
-            </FormErrorMessage>
-          </FormControl>
+        <VStack spacing='4' alignItems='left'>
           <FormControl isInvalid={Boolean(errors.title)}>
             <FormLabel htmlFor='title' fontSize='12px'>
               本タイトル
@@ -149,6 +120,25 @@ const BookRegisterView = () => {
             />
             <FormErrorMessage>
               {errors.content && errors.content.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={Boolean(errors.content)}>
+            <FormLabel htmlFor='image' fontSize='12px'>
+              画像
+            </FormLabel>
+            <Button onClick={() => inputFileRef.current?.click()}></Button>
+            <Input
+              border='none'
+              fontSize='12px'
+              id='image'
+              type='file'
+              multiple={false}
+              accept='image/jpeg, image/png, image/gif, image/jpg'
+              ref={inputFileRef}
+              display='none'
+            />
+            <FormErrorMessage>
+              {errors.image && errors.image.message}
             </FormErrorMessage>
           </FormControl>
           <Button

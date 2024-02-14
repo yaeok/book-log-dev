@@ -40,7 +40,7 @@ const BookRegisterView = () => {
   const router = useRouter()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
   const [preview, setPreview] = React.useState<string>('')
-  const [imageURL, setImageURL] = React.useState<File[]>([])
+  const [imageURL, setImageURL] = React.useState<any[]>([])
 
   const onSubmit = handleSubmit(async (data: FormInputs) => {
     registerBook({

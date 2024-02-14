@@ -16,16 +16,16 @@ export const registerBook = async (args: {
   title: string
   content: string
   uid: string
-  // imageURL: File[]
+  imageURL: File[]
 }): Promise<void> => {
   const colRef = collection(db, 'users', args.uid, 'books')
   let url = ''
-  // if (args.imageURL.length > 0) {
-  //   url = await registerBookFromStorage({
-  //     file: args.imageURL,
-  //     uid: args.uid,
-  //   })
-  // }
+  if (args.imageURL.length > 0) {
+    url = await registerBookFromStorage({
+      file: args.imageURL,
+      uid: args.uid,
+    })
+  }
   await addDoc(colRef, {
     title: args.title,
     content: args.content,

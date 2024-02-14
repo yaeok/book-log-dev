@@ -107,11 +107,7 @@ const BookRegisterView = () => {
               id='image'
               type='file'
               multiple={false}
-              accept='image/jpeg, image/png, image/gif, image/jpg'
               display='none'
-              {...register('image', {
-                required: '必須項目です',
-              })}
               ref={inputFileRef}
             />
             <FormErrorMessage>

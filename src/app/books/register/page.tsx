@@ -39,7 +39,6 @@ const BookRegisterView = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>()
   const router = useRouter()
-  const inputFileRef = React.useRef<HTMLInputElement>(null)
   const [preview, setPreview] = React.useState<string>('')
 
   const onSubmit = handleSubmit(async (data: FormInputs) => {
@@ -94,13 +93,13 @@ const BookRegisterView = () => {
                 borderRadius='10px'
                 position='relative'
               >
-                <Image alt='' src={preview} fill />
+                <Image alt='image' src={preview} fill />
               </Square>
             </Flex>
             <FormLabel htmlFor='image' fontSize='12px'>
               画像
             </FormLabel>
-            <Button onClick={() => inputFileRef.current?.click()}></Button>
+            {/* <Button onClick={() => inputFileRef.current?.click()}></Button> */}
             <Input
               border='none'
               fontSize='12px'
@@ -108,7 +107,6 @@ const BookRegisterView = () => {
               type='file'
               multiple={false}
               display='none'
-              ref={inputFileRef}
             />
             <FormErrorMessage>
               {errors.image && errors.image.message}

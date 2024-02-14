@@ -1,6 +1,5 @@
 'use client'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale/ja'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { SlArrowLeft } from 'react-icons/sl'
@@ -13,7 +12,6 @@ import {
   Flex,
   Heading,
   IconButton,
-  Spacer,
   Square,
   Text,
   useToast,
@@ -94,7 +92,20 @@ const BookDetailView = ({ params }: BookDetailViewProps) => {
         alignItems='center'
         marginY='8px'
       >
-        <Square size='xs' bg='gray.200' borderRadius='10px'></Square>
+        <Square bg='white' size='xs' borderRadius='10px' position='relative'>
+          {book!.imageURL ? (
+            <Image
+              alt='book'
+              src={book!.imageURL}
+              layout='fill'
+              objectFit='contain'
+            />
+          ) : (
+            <Square size='xs' bg='gray.200' borderRadius='10px'>
+              画像が登録されていません
+            </Square>
+          )}
+        </Square>
         <VStack align='left' minW='100%'>
           <Heading fontSize='20px'>メモ</Heading>
           <Divider borderColor='purple.300' />

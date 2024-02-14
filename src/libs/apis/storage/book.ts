@@ -1,7 +1,7 @@
 import loadImage from 'blueimp-load-image'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 import { storage } from '@/libs/config'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 export const registerBookFromStorage = async (args: {
   file: File[]
@@ -22,7 +22,7 @@ export const registerBookFromStorage = async (args: {
             type: blob.type,
             lastModified: Date.now(),
           })
-          const fullPath = 'books' + args.uid + item.name
+          const fullPath = args.uid + '/' + item.name
           const uploadRef = ref(storage, fullPath)
 
           await uploadBytes(uploadRef, change)
@@ -34,10 +34,16 @@ export const registerBookFromStorage = async (args: {
   return urlList[0]
 }
 
-export const getBookImageUrl = async (imageURL: string): Promise<string> => {
+export const getBookImageUrl = async (args: {
+  uid: string
+  imageURL: string
+}): Promise<string> => {
   const reference = ref(
     storage,
-    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_URL + imageURL
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_URL +
+      args.uid +
+      '/' +
+      args.imageURL
   )
   const url = getDownloadURL(reference)
     .then((url) => {

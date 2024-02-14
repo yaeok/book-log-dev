@@ -25,7 +25,7 @@ import { userState } from '@/states/user'
 type FormInputs = {
   title: string
   content: string
-  image: File[]
+  imageURL: File[]
 }
 
 const BookRegisterView = () => {
@@ -44,7 +44,7 @@ const BookRegisterView = () => {
       uid: user!.uid,
       title: data.title,
       content: data.content,
-      imageURL: data.image,
+      imageURL: data.imageURL,
     }).then(async () => {
       reset()
       router.back()
@@ -123,14 +123,14 @@ const BookRegisterView = () => {
             </FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={Boolean(errors.content)}>
-            <FormLabel htmlFor='image' fontSize='12px'>
+            <FormLabel htmlFor='imageURL' fontSize='12px'>
               画像
             </FormLabel>
             <Button onClick={() => inputFileRef.current?.click()}></Button>
             <Input
               border='none'
               fontSize='12px'
-              id='image'
+              id='imageURL'
               type='file'
               multiple={false}
               accept='image/jpeg, image/png, image/gif, image/jpg'
@@ -138,7 +138,7 @@ const BookRegisterView = () => {
               display='none'
             />
             <FormErrorMessage>
-              {errors.image && errors.image.message}
+              {errors.imageURL && errors.imageURL.message}
             </FormErrorMessage>
           </FormControl>
           <Button

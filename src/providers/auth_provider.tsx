@@ -5,7 +5,7 @@ import React from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
 import Loading from '@/components/loading.component'
-import { getUserInfoByUid } from '@/libs/apis/user'
+import { getUserInfoByUid } from '@/libs/apis/firestore/user'
 import { auth } from '@/libs/config'
 import { messageState } from '@/states/message'
 import { userState } from '@/states/user'

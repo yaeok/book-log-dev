@@ -1,6 +1,4 @@
 'use client'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale/ja'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { SlArrowLeft } from 'react-icons/sl'
@@ -19,7 +17,7 @@ import {
   useToast,
   VStack,
 } from '@/design'
-import { getBookbyBookId } from '@/libs/apis/book'
+import { getBookbyBookId } from '@/libs/apis/firestore/book'
 import { Book } from '@/models/book.model'
 import { userState } from '@/states/user'
 

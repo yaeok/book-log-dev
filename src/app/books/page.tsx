@@ -8,7 +8,6 @@ import {
   QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore'
-import { register } from 'module'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -46,7 +45,7 @@ import {
 import {
   updateFavoritebyBookId,
   updateIsCompletedbyBookId,
-} from '@/libs/apis/book'
+} from '@/libs/apis/firestore/book'
 import { db } from '@/libs/config'
 import { Book } from '@/models/book.model'
 import { userState } from '@/states/user'

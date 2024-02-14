@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,7 +15,6 @@ import {
   IconButton,
   Input,
   Spacer,
-  Square,
   Textarea,
   VStack,
 } from '@/design'
@@ -27,6 +25,7 @@ import { userState } from '@/states/user'
 type FormInputs = {
   title: string
   content: string
+  image: any[]
 }
 
 const BookRegisterView = () => {
@@ -39,15 +38,13 @@ const BookRegisterView = () => {
   } = useForm<FormInputs>()
   const router = useRouter()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
-  const [preview, setPreview] = React.useState<string>('')
-  const [imageURL, setImageURL] = React.useState<any[]>([])
 
   const onSubmit = handleSubmit(async (data: FormInputs) => {
     registerBook({
       uid: user!.uid,
       title: data.title,
       content: data.content,
-      imageURL: imageURL,
+      imageURL: data.image,
     }).then(async () => {
       reset()
       router.back()
@@ -85,80 +82,7 @@ const BookRegisterView = () => {
         </Flex>
       </Flex>
       <form onSubmit={onSubmit}>
-        <Flex
-          flexDirection='column'
-          justifyContent='center'
-          gap='8px'
-          alignItems='center'
-          marginY='8px'
-        >
-          <FormControl>
-            <Flex
-              flexDirection='row'
-              justifyContent='space-between'
-              alignItems='center'
-            >
-              <FormLabel fontSize='12px'>画像</FormLabel>
-              <IconButton
-                aria-label=''
-                icon={<SlArrowLeft />}
-                borderRadius='25'
-                onClick={() => setPreview('')}
-              />
-            </Flex>
-            <Flex
-              flexDirection='column'
-              justifyContent='center'
-              gap='8px'
-              alignItems='center'
-              marginY='8px'
-            >
-              <Square
-                size='xs'
-                bg='white'
-                borderRadius='10px'
-                position='relative'
-                onClick={(event) => {
-                  event.preventDefault()
-                  if (preview) {
-                    return
-                  }
-                  inputFileRef.current?.click()
-                }}
-              >
-                {preview ? (
-                  <Image
-                    alt='book'
-                    src={preview}
-                    layout='fill'
-                    objectFit='contain'
-                  />
-                ) : (
-                  <Square size='xs' bg='gray.200' borderRadius='10px'>
-                    画像を選択
-                  </Square>
-                )}
-              </Square>
-              <Input
-                border='none'
-                fontSize='12px'
-                id='image'
-                type='file'
-                multiple={false}
-                accept='image/jpeg, image/png, image/gif, image/jpg'
-                ref={inputFileRef}
-                display='none'
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  const { files } = event.target
-                  const fileList = Array.from(event.target.files!)
-                  setImageURL(fileList)
-                  if (typeof window !== 'undefined' && files && files[0]) {
-                    setPreview(window.URL.createObjectURL(files[0]))
-                  }
-                }}
-              />
-            </Flex>
-          </FormControl>
+        <VStack spacing='4' alignItems='left'>
           <FormControl isInvalid={Boolean(errors.title)}>
             <FormLabel htmlFor='title' fontSize='12px'>
               本タイトル
@@ -198,7 +122,25 @@ const BookRegisterView = () => {
               {errors.content && errors.content.message}
             </FormErrorMessage>
           </FormControl>
-
+          <FormControl isInvalid={Boolean(errors.content)}>
+            <FormLabel htmlFor='image' fontSize='12px'>
+              画像
+            </FormLabel>
+            <Button onClick={() => inputFileRef.current?.click()}></Button>
+            <Input
+              border='none'
+              fontSize='12px'
+              id='image'
+              type='file'
+              multiple={false}
+              accept='image/jpeg, image/png, image/gif, image/jpg'
+              ref={inputFileRef}
+              display='none'
+            />
+            <FormErrorMessage>
+              {errors.image && errors.image.message}
+            </FormErrorMessage>
+          </FormControl>
           <Button
             variant='none'
             bg='purple.200'
@@ -209,7 +151,7 @@ const BookRegisterView = () => {
           >
             登録
           </Button>
-        </Flex>
+        </VStack>
       </form>
     </div>
   )

@@ -7,6 +7,7 @@ import {
   setDoc,
 } from 'firebase/firestore'
 
+import { registerBookFromStorage } from '@/libs/apis/storage/book'
 import { db } from '@/libs/config'
 import { convertTimestampToStr } from '@/libs/firebase/utils'
 import { Book } from '@/models/book.model'
@@ -15,13 +16,20 @@ export const registerBook = async (args: {
   title: string
   content: string
   uid: string
-  imageURL: string
+  imageURL: File[]
 }): Promise<void> => {
   const colRef = collection(db, 'users', args.uid, 'books')
+  let url = ''
+  if (args.imageURL.length > 0) {
+    url = await registerBookFromStorage({
+      file: args.imageURL,
+      uid: args.uid,
+    })
+  }
   await addDoc(colRef, {
     title: args.title,
     content: args.content,
-    imageURL: '',
+    imageURL: url,
     favorite: false,
     isCompleted: false,
     createdAt: serverTimestamp(),

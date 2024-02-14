@@ -1,7 +1,7 @@
 import loadImage from 'blueimp-load-image'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 import { storage } from '@/libs/config'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 export const registerBookFromStorage = async (args: {
   file: File[]

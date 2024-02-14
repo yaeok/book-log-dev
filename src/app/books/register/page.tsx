@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -21,8 +22,6 @@ import {
 } from '@/design'
 import { registerBook } from '@/libs/apis/firestore/book'
 import { userState } from '@/states/user'
-import Image from 'next/image'
-import { set } from 'date-fns'
 
 // フォームで使用する変数の型を定義
 type FormInputs = {
@@ -115,7 +114,9 @@ const BookRegisterView = () => {
               })}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 const { files } = event.target
-                setPreview(window.URL.createObjectURL(files![0]))
+                if (typeof window !== 'undefined' && files && files[0]) {
+                  setPreview(window.URL.createObjectURL(files[0]))
+                }
               }}
               ref={inputFileRef}
             />
